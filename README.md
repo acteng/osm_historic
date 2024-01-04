@@ -26,11 +26,20 @@ That took about 2 hours, and now down to 10 GB. Then we can clip to a bounding b
 osmium extract -b -6.020508,49.696062,2.329102,55.949200 2011.osm.pbf -o england_2011.pbf -f pbf,add_metadata=false -s simple
 ```
 
-That took just 30 seconds, with output just 175 MB.
+That took just 30 seconds, with output just 175 MB. The equivalent extract today is about 1.2 GB, so that's a quick sense of how sparse OSM data was in 2011!
 
 (TODO: Is it faster to clip first, then time-filter?)
 
-#### Extract cycling infrastructure from it (like in ATIP browse)
+#### Extract cycling infrastructure from it
+
+There's no simple tag for cycling infra in OSM. Ohsome has a [thorough query](https://hex.ohsome.org/#/cycleways_w/2011-06-01T00:00:00Z/8/52.07429015262514/-0.6955267371189224) from a paper, but it's expressed as an Overpass query that we can't readily use. Let's just start with one simple case...
+
+```
+osmium tags-filter england_2011.pbf w/highway=cycleway -o cycleways.osm.pbf
+osmium export cycleways.osm.pbf --geometry-type=linestring -o cycleways.geojson
+```
+
+We'll go back and improve this later.
 
 #### Split by LSOA boundaries
 
