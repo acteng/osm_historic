@@ -39,7 +39,13 @@ osmium tags-filter england_2011.pbf w/highway=cycleway -o cycleways.osm.pbf
 osmium export cycleways.osm.pbf --geometry-type=linestring -o cycleways.geojson
 ```
 
-We'll go back and improve this later.
+We'll go back and improve this later. edit:
+
+```
+osmium tags-filter england_2011.pbf w/highway -o highways.osm.pbf
+osmium export highways.osm.pbf --geometry-type=linestring -o highways.geojson
+npm run filter 2> cycleways_filtered.geojson
+```
 
 #### Split by LSOA boundaries
 
@@ -67,7 +73,7 @@ Now for each of those files, we want to sum the length of all the LineStrings in
 
 ```
 npm i
-npm run run 2> cycleway_lengths_by_lsoa.csv
+npm run sum 2> cycleway_lengths_by_lsoa.csv
 ```
 
 ### Idea 2: ohsome

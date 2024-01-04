@@ -1,7 +1,8 @@
 {
   "name": "osm_historic",
   "scripts": {
-    "run": "npx node script.js",
+    "sum": "npx node sum.js",
+    "filter": "npx node --max-old-space-size=4000 filter.js",
     "fmt": "npx prettier --write *.js"
   },
   "type": "module",
