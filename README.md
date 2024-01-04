@@ -43,6 +43,24 @@ We'll go back and improve this later.
 
 #### Split by LSOA boundaries
 
+Download 2011 LSOA boundaries as GJ from <https://geoportal.statistics.gov.uk/datasets/ons::lsoa-dec-2011-boundaries-generalised-clipped-bgc-ew-v3-2/explore>, and convert it to WGS84:
+
+```
+ogr2ogr lsoas_2011.geojson -t_srs EPSG:4326 ~/Downloads/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_-5359576152338500277.geojson -sql 'SELECT LSOA11CD, geometry FROM "LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_-5359576152338500277"'
+```
+
+We want to take the England-wide cycleway GJ file and split it into one file per LSOA. First we add the `LSOA11CD` property to each LineString using [mapshaper](https://github.com/mbloch/mapshaper):
+
+```
+mapshaper cycleways.geojson -divide lsoas_2011.geojson -o cycleways_grouped.geojson
+```
+
+Then we split into a bunch of files:
+
+```
+mkdir split; cd split; mapshaper -i ../cycleways_grouped.geojson -split LSOA11CD -o format=geojson
+```
+
 #### Sum length
 
 ### Idea 2: ohsome
