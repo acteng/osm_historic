@@ -1,4 +1,5 @@
 import * as fs from "fs";
+import * as readline from "readline";
 
 function include(tags) {
   // From https://flrec.ifas.ufl.edu/geomatics/hochmair/pubs/hochmair_zielstra_neis_TRB2013.pdf
@@ -37,13 +38,19 @@ function include(tags) {
   );
 }
 
-let gj = JSON.parse(fs.readFileSync(process.argv[2], { encoding: "utf8" }));
-gj.features = gj.features.filter((f) => include(f.properties));
-
-// Too big!
-//fs.writeFileSync("cycleways_filtered.geojson", JSON.stringify(gj));
 console.error(`{"type": "FeatureCollection", "features": [`);
-for (let f of gj.features) {
-  console.error(JSON.stringify(f) + ",");
-}
-console.error(`]}`);
+
+let rl = readline.createInterface({
+  input: fs.createReadStream(process.argv[2]),
+});
+rl.on("line", (line) => {
+  let f = JSON.parse(line);
+  if (include(f.properties)) {
+    // Clear properties for smaller output
+    f.properties = {};
+    console.error(JSON.stringify(f) + ",");
+  }
+});
+rl.on("close", () => {
+  console.error(`]}`);
+});
