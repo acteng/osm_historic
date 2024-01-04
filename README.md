@@ -8,7 +8,12 @@ Output: A CSV with LSOA, a total length in 2011, and a total length in 2020
 
 ### Idea 1: Manually
 
-#### Get an old osm.pbf of England
+Setup:
+- At least 100GB disk or so
+- Connection that can reasonably download 40GB
+- npm, mapshaper, osmium
+
+#### Get a osm.pbf of England as of January 1 2011
 
 Geofabrik has old osm.pbfs, if you click on "raw directory index". But <https://download.geofabrik.de/europe/united-kingdom/england.html> and for Europe only go back to 2014.
 
@@ -30,22 +35,26 @@ That took just 30 seconds, with output just 175 MB. The equivalent extract today
 
 (TODO: Is it faster to clip first, then time-filter?)
 
+#### Get a osm.pbf of England as of January 1 2020
+
+This is recent enough, so Geofabrik works: <http://download.geofabrik.de/europe/united-kingdom/england-200101.osm.pbf>. No idea what the filename means, but `osmium fileinfo -e england-200101.osm.pbf` confirms the timestamp of changes in here.
+
 #### Extract cycling infrastructure from it
 
-There's no simple tag for cycling infra in OSM. Ohsome has a [thorough query](https://hex.ohsome.org/#/cycleways_w/2011-06-01T00:00:00Z/8/52.07429015262514/-0.6955267371189224) from a paper, but it's expressed as an Overpass query that we can't readily use. Let's just start with one simple case...
+There's no simple tag for cycling infra in OSM. Ohsome references a [thorough query](https://hex.ohsome.org/#/cycleways_w/2011-06-01T00:00:00Z/8/52.07429015262514/-0.6955267371189224) from [this paper](https://flrec.ifas.ufl.edu/geomatics/hochmair/pubs/hochmair_zielstra_neis_TRB2013.pdf). osmium can't do a complicated filter, so do it ourselves in JS.
+
+I put `england.osm.pbf` in a `2011` and `2020` directory and repeated the next steps for both.
 
 ```
-osmium tags-filter england_2011.pbf w/highway=cycleway -o cycleways.osm.pbf
-osmium export cycleways.osm.pbf --geometry-type=linestring -o cycleways.geojson
-```
-
-We'll go back and improve this later. edit:
-
-```
-osmium tags-filter england_2011.pbf w/highway -o highways.osm.pbf
+cd 2011
+osmium tags-filter england.osm.pbf w/highway -o highways.osm.pbf
 osmium export highways.osm.pbf --geometry-type=linestring -o highways.geojson
-npm run filter 2> cycleways_filtered.geojson
+npm run filter `pwd`/highways.geojson 2> cycleways.geojson
 ```
+
+Manually removing the comma on the very last feature
+
+TODO: 2020 is too big to do the filter, grr.
 
 #### Split by LSOA boundaries
 
@@ -58,21 +67,22 @@ ogr2ogr lsoas_2011.geojson -t_srs EPSG:4326 ~/Downloads/LSOA_Dec_2011_Boundaries
 We want to take the England-wide cycleway GJ file and split it into one file per LSOA. First we add the `LSOA11CD` property to each LineString using [mapshaper](https://github.com/mbloch/mapshaper):
 
 ```
-mapshaper cycleways.geojson -divide lsoas_2011.geojson -o cycleways_grouped.geojson
+mapshaper-xl cycleways.geojson -divide ../lsoas_2011.geojson -o cycleways_grouped.geojson
 ```
 
 Then we split into a bunch of files:
 
 ```
-mkdir split; cd split; mapshaper -i ../cycleways_grouped.geojson -split LSOA11CD -o format=geojson
+mkdir split; cd split; mapshaper-xl -i ../cycleways_grouped.geojson -split LSOA11CD -o format=geojson
+# Leftover out-of-bounds stuff in Scotland
+rm -f null.json
 ```
 
 #### Sum length
 
-Now for each of those files, we want to sum the length of all the LineStrings inside. Finally we have to write some code... sigh.
+Now for each of those files, we want to sum the length of all the LineStrings inside.
 
 ```
-npm i
 npm run sum 2> cycleway_lengths_by_lsoa.csv
 ```
 

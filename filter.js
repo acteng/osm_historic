@@ -37,12 +37,12 @@ function include(tags) {
   );
 }
 
-let gj = JSON.parse(fs.readFileSync("highways.geojson", { encoding: "utf8" }));
+let gj = JSON.parse(fs.readFileSync(process.argv[2], { encoding: "utf8" }));
 gj.features = gj.features.filter((f) => include(f.properties));
 
 // Too big!
 //fs.writeFileSync("cycleways_filtered.geojson", JSON.stringify(gj));
-console.error(`{"type": "FeatureCollection": [`);
+console.error(`{"type": "FeatureCollection", "features": [`);
 for (let f of gj.features) {
   console.error(JSON.stringify(f) + ",");
 }
