@@ -76,9 +76,10 @@ rm -f null.json
 
 #### Sum length
 
-Now for each of those files, we want to sum the length of all the LineStrings inside.
+Now for each of those split files, we want to sum the length of all the LineStrings inside.
 
 ```
+# Back in the main directory
 npm run sum 2> cycleway_lengths_by_lsoa.csv
 ```
 
