@@ -63,6 +63,13 @@ mkdir split; cd split; mapshaper -i ../cycleways_grouped.geojson -split LSOA11CD
 
 #### Sum length
 
+Now for each of those files, we want to sum the length of all the LineStrings inside. Finally we have to write some code... sigh.
+
+```
+npm i
+npm run run 2> cycleway_lengths_by_lsoa.csv
+```
+
 ### Idea 2: ohsome
 
 Something like <https://hex.ohsome.org/#/cycleways_w/2011-06-01T00:00:00Z/8/52.07429015262514/-0.6955267371189224> might just work

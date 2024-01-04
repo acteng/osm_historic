@@ -1,0 +1,14 @@
+{
+  "name": "osm_historic",
+  "scripts": {
+    "run": "npx node script.js",
+    "fmt": "npx prettier --write *.js"
+  },
+  "type": "module",
+  "dependencies": {
+    "@turf/length": "^6.5.0"
+  },
+  "devDependencies": {
+    "prettier": "^3.0.3"
+  }
+}
