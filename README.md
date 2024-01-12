@@ -72,6 +72,8 @@ Then we split into a bunch of files:
 mkdir split; cd split; mapshaper-xl -i ../cycleways_grouped.geojson -split LSOA11CD -o format=geojson
 # Leftover out-of-bounds stuff in Scotland
 rm -f null.json
+# Actually remove everything from Scotland, since it'll only be in the imperfect 2011 clip
+rm -fv W*.json
 ```
 
 #### Sum length
