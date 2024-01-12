@@ -47,7 +47,8 @@ rl.on("line", (line) => {
   let f = JSON.parse(line);
   if (include(f.properties)) {
     // Clear properties for smaller output
-    f.properties = {};
+    let osm_id = f.properties["@id"];
+    f.properties = {osm_id};
     console.error(JSON.stringify(f) + ",");
   }
 });

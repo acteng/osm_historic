@@ -48,7 +48,7 @@ I put `england.osm.pbf` in a `2011` and `2020` directory and repeated the next s
 ```
 cd 2011
 osmium tags-filter england.osm.pbf w/highway -o highways.osm.pbf
-osmium export highways.osm.pbf --geometry-type=linestring -f geojsonseq -x print_record_separator=false -o highways.geojson
+osmium export highways.osm.pbf --config ../osmium_with_ids.cfg --geometry-type=linestring -f geojsonseq -x print_record_separator=false -o highways.geojson
 npm run filter `pwd`/highways.geojson 2> cycleways.geojson
 ```
 
