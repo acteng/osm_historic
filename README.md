@@ -50,6 +50,9 @@ cd 2011
 osmium tags-filter england.osm.pbf w/highway -o highways.osm.pbf
 osmium export highways.osm.pbf --config ../osmium_with_ids.cfg --geometry-type=linestring -f geojsonseq -x print_record_separator=false -o highways.geojson
 npm run filter `pwd`/highways.geojson 2> cycleways.geojson
+# For convenient use in QGIS, convert to geopackage
+# Manually remove the trailing comma after the last feature, making it valid JSON
+ogr2ogr -f GPKG cycleways.gpkg cycleways.geojson
 ```
 
 #### Split by LSOA boundaries
