@@ -20,8 +20,8 @@ let sums_2011 = sum("2011/split");
 let sums_2020 = sum("2020/split");
 
 // npm dumps stuff to STDOUT, so output on STDERR
-console.error(`LSOA11CD,total_length_meters_2011,length_meters_2020`);
-for (let [lsoa, sum_2011] of Object.entries(sums_2011)) {
-  let sum_2020 = sums_2020[lsoa] || 0.0;
-  console.error(`${lsoa},${sum_2011},${sum_2020}`);
+console.error(`LAD11CD,total_length_meters_2011,length_meters_2020`);
+for (let [lad, sum_2011] of Object.entries(sums_2011)) {
+  let sum_2020 = sums_2020[lad] || 0.0;
+  console.error(`${lad},${sum_2011},${sum_2020}`);
 }

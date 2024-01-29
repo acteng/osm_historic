@@ -4,7 +4,7 @@ Determine if old OSM data on cycling infrastructure could help with uplift model
 
 ## Measure total length of cycling infrastructure in the past
 
-Output: A CSV with LSOA, a total length in 2011, and a total length in 2020
+Output: A CSV with LAD, a total length in 2011, and a total length in 2020
 
 ### Idea 1: Manually
 
@@ -55,24 +55,24 @@ npm run filter `pwd`/highways.geojson 2> cycleways.geojson
 ogr2ogr -f GPKG cycleways.gpkg cycleways.geojson
 ```
 
-#### Split by LSOA boundaries
+#### Split by LAD boundaries
 
-Download 2011 LSOA boundaries as GJ from <https://geoportal.statistics.gov.uk/datasets/ons::lsoa-dec-2011-boundaries-generalised-clipped-bgc-ew-v3-2/explore>, and convert it to WGS84:
-
-```
-ogr2ogr lsoas_2011.geojson -t_srs EPSG:4326 ~/Downloads/LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_-5359576152338500277.geojson -sql 'SELECT LSOA11CD, geometry FROM "LSOA_Dec_2011_Boundaries_Generalised_Clipped_BGC_EW_V3_-5359576152338500277"'
-```
-
-We want to take the England-wide cycleway GJ file and split it into one file per LSOA. First we add the `LSOA11CD` property to each LineString using [mapshaper](https://github.com/mbloch/mapshaper):
+Download 2011 LAD boundaries as GJ from <https://geoportal.statistics.gov.uk/datasets/cf3af807271246f4a8865e30f308fc21_0/explore>, and convert it to WGS84:
 
 ```
-mapshaper-xl cycleways.geojson -divide ../lsoas_2011.geojson -o cycleways_grouped.geojson
+ogr2ogr lads_2011.geojson -t_srs EPSG:4326 ~/Downloads/Local_Authority_Districts_December_2011_FEB_EW_2022_-7538937248730119669.geojson -sql 'SELECT * FROM "Local_Authority_Districts_December_2011_FEB_EW_2022_-7538937248730119669"'
+```
+
+We want to take the England-wide cycleway GJ file and split it into one file per LAD. First we add the `lad11cd` property to each LineString using [mapshaper](https://github.com/mbloch/mapshaper):
+
+```
+mapshaper-xl cycleways.geojson -divide ../lads_2011.geojson -o cycleways_grouped.geojson
 ```
 
 Then we split into a bunch of files:
 
 ```
-mkdir split; cd split; mapshaper-xl -i ../cycleways_grouped.geojson -split LSOA11CD -o format=geojson
+mkdir split; cd split; mapshaper-xl -i ../cycleways_grouped.geojson -split lad11cd -o format=geojson
 # Leftover out-of-bounds stuff in Scotland
 rm -f null.json
 # Actually remove everything from Scotland, since it'll only be in the imperfect 2011 clip
@@ -85,7 +85,7 @@ Now for each of those split files, we want to sum the length of all the LineStri
 
 ```
 # Back in the main directory
-npm run sum 2> cycleway_lengths_by_lsoa.csv
+npm run sum 2> cycleway_lengths_by_lad.csv
 ```
 
 ### Idea 2: ohsome
