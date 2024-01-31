@@ -21,7 +21,16 @@ let sums_2020 = sum("2020/split");
 
 // npm dumps stuff to STDOUT, so output on STDERR
 console.error(`LAD11CD,total_length_meters_2011,length_meters_2020`);
+let seen = new Set();
 for (let [lad, sum_2011] of Object.entries(sums_2011)) {
+  seen.add(lad);
   let sum_2020 = sums_2020[lad] || 0.0;
   console.error(`${lad},${sum_2011},${sum_2020}`);
+}
+
+// Handle places only in 2020
+for (let [lad, sum_2020] of Object.entries(sums_2020)) {
+  if (!seen.has(lad)) {
+    console.error(`${lad},0.0,${sum_2020}`);
+  }
 }
