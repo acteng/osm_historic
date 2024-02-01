@@ -39,6 +39,8 @@ That took just 30 seconds, with output just 175 MB. The equivalent extract today
 
 This is recent enough, so Geofabrik works: <http://download.geofabrik.de/europe/united-kingdom/england-200101.osm.pbf>. No idea what the filename means, but `osmium fileinfo -e england-200101.osm.pbf` confirms the timestamp of changes in here.
 
+And likewise, 2016 is <http://download.geofabrik.de/europe/united-kingdom/england-160101.osm.pbf>
+
 #### Extract cycling infrastructure from it
 
 There's no simple tag for cycling infra in OSM. Ohsome references a [thorough query](https://hex.ohsome.org/#/cycleways_w/2011-06-01T00:00:00Z/8/52.07429015262514/-0.6955267371189224) from [this paper](https://flrec.ifas.ufl.edu/geomatics/hochmair/pubs/hochmair_zielstra_neis_TRB2013.pdf). osmium can't do a complicated filter, so do it ourselves in JS.
